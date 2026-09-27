@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# venv
+.venv/
+venv/
+env/
+
+# uv
+uv.lock
+
+# PyCharm
+.idea/
+.idea
+# env / secrets
+.env
+.env.*
+
+# logs / local
+*.log
+.cache/
