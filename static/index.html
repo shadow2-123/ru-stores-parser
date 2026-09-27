@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Сравнение магазинов</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">DNS + Ситилинк</p>
+      <h1>Поиск товара</h1>
+      <form id="f">
+        <input id="q" type="search" placeholder="Например: ryzen 5 5600" value="ryzen 5 5600" autocomplete="off">
+        <button type="submit" id="btn">Найти</button>
+      </form>
+    </header>
+
+    <section class="status-panel">
+      <div class="status-head">
+        <h2>Статусы</h2>
+        <span id="health-updated" class="muted">обновление…</span>
+      </div>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Источник</th>
+            <th>Статус</th>
+            <th>Детали</th>
+          </tr>
+        </thead>
+        <tbody id="health-body">
+          <tr>
+            <td>Chrome CDP</td>
+            <td id="chrome-status">—</td>
+            <td id="chrome-detail">порт 9222</td>
+          </tr>
+          <tr data-shop="dns">
+            <td>DNS</td>
+            <td class="shop-status">—</td>
+            <td class="shop-detail"></td>
+          </tr>
+          <tr data-shop="citilink">
+            <td>Ситилинк</td>
+            <td class="shop-status">—</td>
+            <td class="shop-detail"></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <p id="status" class="status"></p>
+    <section id="out" class="results"></section>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

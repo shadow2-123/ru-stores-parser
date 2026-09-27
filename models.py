@@ -15,6 +15,11 @@ class ShopStatus(StrEnum):
     transport_down = "transport_down"
     error = "error"
 
+class SearchItem(BaseModel):
+    product_id: str | None = None
+    title: str | None = None
+    url: str | None = None
+    price: float | None = None
 
 class ShopResult(BaseModel):
     shop: ShopId
@@ -24,12 +29,6 @@ class ShopResult(BaseModel):
     items: list[SearchItem] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
     error: str | None = None
-
-class SearchItem(BaseModel):
-    product_id: str | None = None
-    title: str | None = None
-    url: str | None = None
-    price: float | None = None
 
 class SearchResponse(BaseModel):
     query: str
