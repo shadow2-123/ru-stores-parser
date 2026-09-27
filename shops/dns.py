@@ -10,8 +10,7 @@ def shop_result_from_dns(raw) -> ShopResult:
             product_id=it.product_id,
             title=it.title,
             url=it.url,
-            price_rub=it.price_rub,
-            old_price_rub=it.old_price_rub,
+            price=it.price_rub,
         )
         for it in raw.items
     ]
