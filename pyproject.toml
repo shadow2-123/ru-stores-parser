@@ -1,0 +1,11 @@
+[project]
+name = "ru-stores-parser"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "dns-connector",
+]
+
+[tool.uv.sources]
+dns-connector = { path = "../ru-marketplace-mcp/packages/dns-connector", editable = true }
+mcp-core = { path = "../ru-marketplace-mcp/packages/mcp-core", editable = true }
