@@ -1,9 +1,18 @@
 import asyncio
-from dns_connector.server import dns_search
+
+from shops.citilink import search_citilink
+from shops.dns import search_dns
+
 
 async def main() -> None:
-    result = await dns_search("ноутбук lenovo")
-    print(result)
+    query = "ryzen 5 5600"
+    dns_result, citilink_result = await asyncio.gather(
+        search_dns(query),
+        search_citilink(query),
+    )
+    print(dns_result)
+    print(citilink_result)
+
 
 if __name__ == "__main__":
     asyncio.run(main())
