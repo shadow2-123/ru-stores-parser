@@ -5,7 +5,7 @@ from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from models import HealthResponse, SearchResponse, ShopHealth, ShopId, ShopStatus
+from models import HealthResponse, SearchResponse, ShopHealth, ShopId, ShopStatus, ShopResult
 from shops.citilink import search_citilink
 from shops.dns import search_dns
 
@@ -43,6 +43,16 @@ async def health() -> HealthResponse:
         ],
     )
 
+@app.get("/search/dns", response_model=ShopResult)
+async def search_dns_api(q: str = Query(min_length=1, max_length=200)) -> ShopResult:
+    async with _cdp_lock:
+        return await search_dns(q)
+
+
+@app.get("/search/citilink", response_model=ShopResult)
+async def search_citilink_api(q: str = Query(min_length=1, max_length=200)) -> ShopResult:
+    async with _cdp_lock:
+        return await search_citilink(q)
 
 @app.get("/search", response_model=SearchResponse)
 async def search(q: str = Query(min_length=1, max_length=200)) -> SearchResponse:

@@ -1,57 +1,69 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Сравнение магазинов</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Парсер цен</title>
+  <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <p class="eyebrow">DNS + Ситилинк</p>
-      <h1>Поиск товара</h1>
-      <form id="f">
-        <input id="q" type="search" placeholder="Например: ryzen 5 5600" value="ryzen 5 5600" autocomplete="off">
-        <button type="submit" id="btn">Найти</button>
-      </form>
+  <input type="checkbox" id="theme-toggle" class="theme-toggle-input">
+
+  <div class="page">
+    <header class="header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <h1>Парсер цен</h1>
+        </div>
+      </div>
+
+      <label class="theme-switch" for="theme-toggle" title="Переключить тему">
+        <span class="theme-label theme-label-light">Светлая</span>
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+        <span class="theme-label theme-label-dark">Тёмная</span>
+      </label>
     </header>
 
-    <section class="status-panel">
-      <div class="status-head">
-        <h2>Статусы</h2>
-        <span id="health-updated" class="muted">обновление…</span>
-      </div>
-      <table class="status-table">
-        <thead>
-          <tr>
-            <th>Источник</th>
-            <th>Статус</th>
-            <th>Детали</th>
-          </tr>
-        </thead>
-        <tbody id="health-body">
-          <tr>
-            <td>Chrome CDP</td>
-            <td id="chrome-status">—</td>
-            <td id="chrome-detail">порт 9222</td>
-          </tr>
-          <tr data-shop="dns">
-            <td>DNS</td>
-            <td class="shop-status">—</td>
-            <td class="shop-detail"></td>
-          </tr>
-          <tr data-shop="citilink">
-            <td>Ситилинк</td>
-            <td class="shop-status">—</td>
-            <td class="shop-detail"></td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+    <main class="content">
+      <section class="panel controls">
+        <label class="coef-field">
+          <span>Коэффициент</span>
+          <input id="coef" type="text" value="1.15" inputmode="decimal" placeholder="1.00">
+        </label>
 
-    <p id="status" class="status"></p>
-    <section id="out" class="results"></section>
+        <form class="search" id="f">
+          <input id="q" type="search" placeholder="Наименование или артикул" aria-label="Поиск">
+          <button type="submit" id="btn">Поиск</button>
+        </form>
+      </section>
+
+      <section class="panel health" aria-label="Состояние магазинов">
+        <div class="health-title">/health магазинов · <span id="health-updated">обновление…</span></div>
+        <ul class="health-list" id="health-list"></ul>
+      </section>
+
+      <section class="panel results">
+        <div class="results-head">
+          <h2>Результаты</h2>
+          <span class="results-note" id="status">Цена × коэф считается от введённого коэффициента</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th data-sort="shop">Магазин</th>
+                <th>Наименование</th>
+                <th data-sort="price">Цена</th>
+                <th data-sort="priced">Цена × коэф</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
   </div>
   <script src="/static/app.js"></script>
 </body>
