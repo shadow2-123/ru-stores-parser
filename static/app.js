@@ -45,9 +45,8 @@ function renderRows() {
     return (av - bv) * sortDir;
   });
 
-  const visible = copy.slice(0, 15);
   rowsEl.innerHTML = "";
-  for (const it of visible) {
+  for (const it of copy) {
     const tr = document.createElement("tr");
     const title = it.title || "—";
     const nameCell = it.url
@@ -79,24 +78,22 @@ function setHealthItem(id, label, state, text) {
   li.innerHTML = `<span class="dot ${cls}"></span>${label} <em>${text || state}</em>`;
 }
 
-async function refreshHealth() {
+async function refreshChrome() {
   try {
-    const r = await fetch("/health");
+    const r = await fetch("/health/chrome");
     const data = await r.json();
-    setHealthItem(
-      "chrome",
-      "Chrome CDP",
-      data.chrome_cdp ? "online" : "down",
-      data.chrome_cdp ? "ok" : "down"
-    );
-    for (const shop of data.shops || []) {
-      setHealthItem(shop.shop, names[shop.shop] || shop.shop, shop.status, shop.status);
-    }
-    const upd = document.getElementById("health-updated");
-    if (upd) upd.textContent = new Date().toLocaleTimeString("ru-RU");
+    setHealthItem("chrome", "Chrome CDP", data.chrome_cdp ? "online" : "down", data.chrome_cdp ? "ok" : "down");
   } catch {
     setHealthItem("chrome", "Chrome CDP", "down", "нет связи");
   }
+  const upd = document.getElementById("health-updated");
+  if (upd) upd.textContent = new Date().toLocaleTimeString("ru-RU");
+}
+
+async function refreshShopHealth(shop) {
+  const r = await fetch("/health/" + shop);
+  const data = await r.json();
+  setHealthItem(shop, names[shop] || shop, data.status, data.detail || data.status);
 }
 
 async function loadShop(shop) {
@@ -145,7 +142,7 @@ document.getElementById("f").addEventListener("submit", async (e) => {
   status.textContent = "Ищем…";
   try {
     await Promise.allSettled([loadShop("dns"), loadShop("citilink")]);
-    status.textContent = "Готово · строк: " + items.length + " (на экране до 15)";
+    status.textContent = "Готово · строк: " + items.length;
   } catch (err) {
     status.textContent = err && err.message ? err.message : "ошибка запроса";
   } finally {
@@ -169,5 +166,25 @@ for (const th of document.querySelectorAll("th[data-sort]")) {
   });
 }
 
-refreshHealth();
-setInterval(refreshHealth, 30000);
+const themeToggle = document.getElementById("theme-toggle");
+const coefInput = document.getElementById("coef");
+
+if (localStorage.getItem("theme") === "dark") {
+  themeToggle.checked = true;
+}
+const savedCoef = localStorage.getItem("coef");
+if (savedCoef) {
+  coefInput.value = savedCoef;
+}
+
+themeToggle.addEventListener("change", () => {
+  localStorage.setItem("theme", themeToggle.checked ? "dark" : "light");
+});
+
+coefInput.addEventListener("input", () => {
+  localStorage.setItem("coef", coefInput.value);
+  renderRows();
+});
+
+refreshChrome();
+setInterval(refreshChrome, 30000);
