@@ -1,4 +1,4 @@
-const names = { dns: "DNS", citilink: "Ситилинк" };
+const names = { dns: "DNS", citilink: "Ситилинк", ozon: "Ozon" };
 const rowsEl = document.getElementById("rows");
 const status = document.getElementById("status");
 const btn = document.getElementById("btn");
@@ -141,7 +141,11 @@ document.getElementById("f").addEventListener("submit", async (e) => {
   rowsEl.innerHTML = "";
   status.textContent = "Ищем…";
   try {
-    await Promise.allSettled([loadShop("dns"), loadShop("citilink")]);
+    await Promise.allSettled([
+  loadShop("dns"),
+  loadShop("citilink"),
+  loadShop("ozon"),
+]);
     status.textContent = "Готово · строк: " + items.length;
   } catch (err) {
     status.textContent = err && err.message ? err.message : "ошибка запроса";

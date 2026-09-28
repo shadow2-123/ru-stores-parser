@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 class ShopId(StrEnum):
     dns = "dns"
     citilink = "citilink"
+    wb = "wb"
+    ozon = "ozon"
 
 
 class ShopStatus(StrEnum):

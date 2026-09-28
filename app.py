@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from models import HealthResponse, SearchResponse, ShopHealth, ShopId, ShopStatus, ShopResult
 from shops.citilink import search_citilink
 from shops.dns import search_dns
+from shops.ozon import search_ozon
 
 import logging
 import time
@@ -72,3 +73,8 @@ async def search_citilink_api(q: str = Query(min_length=1, max_length=200)) -> S
         q, result.status, result.count, result.error, time.perf_counter() - t0,
     )
     return result
+
+
+@app.get("/search/ozon", response_model=ShopResult)
+async def search_ozon_api(q: str = Query(min_length=1, max_length=200)) -> ShopResult:
+    return await search_ozon(q)
