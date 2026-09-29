@@ -190,5 +190,29 @@ coefInput.addEventListener("input", () => {
   renderRows();
 });
 
+document.getElementById("warmup").addEventListener("click", async () => {
+  const b = document.getElementById("warmup");
+  b.disabled = true;
+  status.textContent = "Обновляю сессии…";
+  try {
+    const r = await fetch("/warmup", { method: "POST" });
+    const data = await r.json();
+    for (const shop of data.shops || []) {
+      setHealthItem(
+        shop.shop,
+        names[shop.shop] || shop.shop,
+        shop.ok ? "ok" : "down",
+        shop.detail
+      );
+    }
+    status.textContent = data.ok ? "Сессии обновлены" : "Обновилось с ошибками";
+  } catch (err) {
+    status.textContent = "Не удалось обновить сессии";
+  } finally {
+    b.disabled = false;
+  }
+});
+
+
 refreshChrome();
 setInterval(refreshChrome, 30000);

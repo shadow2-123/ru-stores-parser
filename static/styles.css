@@ -178,6 +178,8 @@ body {
 .search {
   display: grid;
   gap: 8px;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
 }
 
 .coef-field span,
@@ -393,3 +395,27 @@ body:has(#theme-toggle:checked) {
   --track: #1d3d68;
   --thumb: #d7e8fb;
 }
+
+.health-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#warmup {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#warmup:hover { border-color: var(--accent); }
+#warmup:disabled { opacity: 0.55; cursor: wait; }

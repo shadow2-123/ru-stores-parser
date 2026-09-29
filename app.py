@@ -21,7 +21,13 @@ logging.basicConfig(
     encoding="utf-8",
 )
 log = logging.getLogger("parser")
+from mcp_core.transport.chrome_cdp import NavBlocked, open_page
 
+WARMUP = (
+    ("dns", "https://www.dns-shop.ru/", ("dns-shop.ru", "www.dns-shop.ru"), 12000),
+    ("citilink", "https://www.citilink.ru/", ("citilink.ru", "www.citilink.ru"), 6000),
+    ("ozon", "https://www.ozon.ru/", ("ozon.ru", "www.ozon.ru"), 6000),
+)
 
 app = FastAPI(title="ru-stores-parser")
 _cdp_lock = asyncio.Lock()
@@ -78,3 +84,19 @@ async def search_citilink_api(q: str = Query(min_length=1, max_length=200)) -> S
 @app.get("/search/ozon", response_model=ShopResult)
 async def search_ozon_api(q: str = Query(min_length=1, max_length=200)) -> ShopResult:
     return await search_ozon(q)
+
+@app.post("/warmup")
+async def warmup() -> dict:
+    results = []
+    for shop, url, hosts, wait_time in WARMUP:
+        item = {"shop": shop, "ok": False, "detail": ""}
+        try:
+            async with open_page(url, wait_ms=wait_time, allowed_hosts=hosts):
+                item["ok"] = True
+                item["detail"] = "ok"
+        except NavBlocked as exc:
+            item["detail"] = f"blocked {exc.status}"
+        except Exception as exc:
+            item["detail"] = str(exc)[:200]
+        results.append(item)
+    return {"ok": all(x["ok"] for x in results), "shops": results}

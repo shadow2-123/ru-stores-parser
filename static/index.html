@@ -34,13 +34,15 @@
 
         <form class="search" id="f">
           <input id="q" type="search" placeholder="Наименование или артикул" aria-label="Поиск">
-          <button type="submit" id="btn">Поиск</button>
-        </form>
+          <button type="submit" id="btn">Поиск</button></form>
       </section>
 
-      <section class="panel health" aria-label="Состояние магазинов">
-        <div class="health-title">/health магазинов · <span id="health-updated">обновление…</span></div>
-        <ul class="health-list" id="health-list"></ul>
+      <section class="panel health">
+      <div class="health-top">
+        <div class="health-title">Статус магазинов · <span id="health-updated"></span></div>
+          <button type="button" id="warmup">Обновить сессии</button>
+        </div>
+       <ul class="health-list" id="health-list"></ul>
       </section>
 
       <section class="panel results">
