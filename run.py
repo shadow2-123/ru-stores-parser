@@ -1,6 +1,7 @@
 import asyncio
 import sys
-
+import os
+os.environ["CHROME_STEALTH"] = "0"
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
