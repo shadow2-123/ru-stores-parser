@@ -8,6 +8,8 @@ from models import HealthResponse, SearchResponse, ShopHealth, ShopId, ShopStatu
 from shops.citilink import search_citilink
 from shops.dns import search_dns
 from shops.ozon import search_ozon
+import time
+from shops.warmup import warmup_shops
 
 import logging
 import time
@@ -87,16 +89,7 @@ async def search_ozon_api(q: str = Query(min_length=1, max_length=200)) -> ShopR
 
 @app.post("/warmup")
 async def warmup() -> dict:
-    results = []
-    for shop, url, hosts, wait_time in WARMUP:
-        item = {"shop": shop, "ok": False, "detail": ""}
-        try:
-            async with open_page(url, wait_ms=wait_time, allowed_hosts=hosts):
-                item["ok"] = True
-                item["detail"] = "ok"
-        except NavBlocked as exc:
-            item["detail"] = f"blocked {exc.status}"
-        except Exception as exc:
-            item["detail"] = str(exc)[:200]
-        results.append(item)
-    return {"ok": all(x["ok"] for x in results), "shops": results}
+    async with _cdp_lock:
+        result = await warmup_shops()
+    log.info("warmup ok=%s shops=%s", result["ok"], result["shops"])
+    return result
