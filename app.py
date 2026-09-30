@@ -23,7 +23,11 @@ logging.basicConfig(
     encoding="utf-8",
 )
 log = logging.getLogger("parser")
-from mcp_core.transport.chrome_cdp import NavBlocked, open_page
+_locks = {
+    "dns": asyncio.Lock(),
+    "citilink": asyncio.Lock(),
+    "ozon": asyncio.Lock(),
+}
 
 WARMUP = (
     ("dns", "https://www.dns-shop.ru/", ("dns-shop.ru", "www.dns-shop.ru"), 12000),
@@ -32,7 +36,6 @@ WARMUP = (
 )
 
 app = FastAPI(title="ru-stores-parser")
-_cdp_lock = asyncio.Lock()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -62,7 +65,7 @@ async def health_chrome() -> dict:
 @app.get("/search/dns", response_model=ShopResult)
 async def search_dns_api(q: str = Query(min_length=1, max_length=200)) -> ShopResult:
     t0 = time.perf_counter()
-    async with _cdp_lock:
+    async with _locks["dns"]:
         result = await search_dns(q)
     log.info(
         "search shop=dns q=%r status=%s count=%s error=%r dt=%.1fs",
@@ -74,7 +77,7 @@ async def search_dns_api(q: str = Query(min_length=1, max_length=200)) -> ShopRe
 @app.get("/search/citilink", response_model=ShopResult)
 async def search_citilink_api(q: str = Query(min_length=1, max_length=200)) -> ShopResult:
     t0 = time.perf_counter()
-    async with _cdp_lock:
+    async with _locks["citilink"]:
         result = await search_citilink(q)
     log.info(
         "search shop=citilink q=%r status=%s count=%s error=%r dt=%.1fs",
@@ -85,11 +88,18 @@ async def search_citilink_api(q: str = Query(min_length=1, max_length=200)) -> S
 
 @app.get("/search/ozon", response_model=ShopResult)
 async def search_ozon_api(q: str = Query(min_length=1, max_length=200)) -> ShopResult:
-    return await search_ozon(q)
+    t0 = time.perf_counter()
+    async with _locks["ozon"]:
+        result = await search_citilink(q)
+    log.info(
+        "search shop=ozon q=%r status=%s count=%s error=%r dt=%.1fs",
+        q, result.status, result.count, result.error, time.perf_counter() - t0,
+    )
+    return result
 
 @app.post("/warmup")
 async def warmup() -> dict:
-    async with _cdp_lock:
+    async with _locks["dns"], _locks["citilink"], _locks["ozon"]:
         result = await warmup_shops()
     log.info("warmup ok=%s shops=%s", result["ok"], result["shops"])
     return result
